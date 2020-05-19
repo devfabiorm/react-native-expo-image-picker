@@ -35,6 +35,22 @@ export default function () {
         console.log("Sorry, we need camera roll permissions to make this work");
       }
     }
+
+    const { granted } = Permissions.askAsync(Permissions.CAMERA);
+    if (!granted) {
+      console.log("Sorry, we need camera permissions to make this work");
+    }
+  }
+
+  const handleTakePho = async () => {
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+
+      });
+      
+    } catch (error) {
+      
+    }
   }
 
   useEffect(() => {
@@ -46,12 +62,16 @@ export default function () {
       {image && (
         <Image
           source={{ uri: image.uri }}
-          style={{ width: 300, height: 300}}
+          style={{ width: 300, height: 300 }}
         />
       )}
       <Button
         title='Choose Photo'
         onPress={handleChoosePhoto}
+      />
+      <Button
+        title='Take a photo'
+        onPress={handleTakePho}
       />
     </View>
   );
