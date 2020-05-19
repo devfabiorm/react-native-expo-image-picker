@@ -1,19 +1,58 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, Button, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import Contants from 'expo-constants';
 
-export default function App() {
+export default function () {
+
+  const [image, setImage] = useState(null);
+
+  const handleChoosePhoto = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        //mediaTypes: ImagePicker.MediaTypeOptions.All,
+        // allowsEditing: true,
+        // aspect: [4, 3],
+        // quality: 1
+
+      });
+
+      if (!result.cancelled) {
+        setImage({ uri: result.uri });
+      }
+
+      // console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getPermissionAsync = async () => {
+    if (Contants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status != 'granted') {
+        console.log("Sorry, we need camera roll permissions to make this work");
+      }
+    }
+  }
+
+  useEffect(() => {
+    getPermissionAsync();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      {image && (
+        <Image
+          source={{ uri: image.uri }}
+          style={{ width: 300, height: 300}}
+        />
+      )}
+      <Button
+        title='Choose Photo'
+        onPress={handleChoosePhoto}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
